@@ -17,4 +17,3 @@ add_executable( generate_raw_image ${NAME_SRC} ${NAME_HEADERS} )
 target_link_libraries( generate_raw_image ${OpenCV_LIBS})
 
 
-

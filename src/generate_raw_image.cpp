@@ -5,29 +5,29 @@
 #include <iostream>
 #include <fstream>
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.cpp>
+#include <opencv2/highgui/highgui.hpp>
 
-void read_image( int argc, char** argv)
+int main( int argc, char** argv)
 {
     if(argc != 2)
     {
         fprintf(stdout, "Usage: \n");
-        return;
+        return -1;
     }
 
     cv::Mat image;
-    image = imread(argv[1], CV_LOAD_IMAGE_COLOR); // FIXME : Change this to the 'Unchanged' option (Need to look up what it is called)
+    image = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
     if(! image.data)
     {
         fprintf(stdout, "Could not open image");
-        return;
+        return -1;
     }
 
-    cv::namedWindow("Display window", WINDOW_AUTOSIZE );
+    cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE );
     cv::imshow("Display window", image);
 
     cv::waitKey(0);
-    return;
+    return 0;
 }
 
     

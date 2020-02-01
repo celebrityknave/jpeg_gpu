@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <argp.h>
 
 #define DEBUG 1
@@ -63,8 +64,38 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
-int read_img( char *filename, char *raw_img )
+int getFileExtension(char *filename, char **fileExtension)
 {
+    *fileExtension = strchr(filename, '.');
+    if(*fileExtension == NULL)
+        *fileExtension = "";
+
+    return 0;
+}
+
+int readImg( char *filename, char *raw_img )
+{
+    char *fileExtension;
+    getFileExtension(filename, &fileExtension);
+#if DEBUG
+    fprintf(stdout, "File extension: %s\n", fileExtension);
+#endif
+    if(strcmp(fileExtension, ".jpg") == 0)
+        fprintf(stdout, "File already in JPEG format\n");
+    else if( strcmp(fileExtension, ".bmp") == 0)
+        fprintf(stdout, "File in BMP format\n");
+    else if(strcmp(fileExtension, ".png") == 0)
+        fprintf(stdout, "File in PNG format\n");
+    else if(strcmp(fileExtension, ".tif") == 0)
+        fprintf(stdout, "File in TIF format\n");
+    else 
+        fprintf(stderr, "Unknown file format: %s\n", fileExtension);
+
+    //char *file_extension;
+    //for(int i = 0; i < strlen(filename); ++i)
+    //{
+    //    printf("%c", filename[i]);
+    //}
     return 0;
 }
 
@@ -77,6 +108,14 @@ int main(int argc, char **argv)
     arguments.output_file = "-";
 
     argp_parse(&argp, argc, argv, 0,0, &arguments);
+
+    char *raw_img;
+    int img_quality;
+    int img_height;
+    int img_width;
+    int img_channels;
+    int img_bitdepth;
+
 #if DEBUG
     fprintf(stdout, "INFILE = %s\nOUTFILE = %s\nVERBOSE = %s\nSILENT = %s\n",
             arguments.args[0], arguments.args[1], 
@@ -84,5 +123,8 @@ int main(int argc, char **argv)
             arguments.silent ? "yes" : "no");
 
 #endif
+    readImg( arguments.args[0], raw_img );
+
     return 0;
+
 }

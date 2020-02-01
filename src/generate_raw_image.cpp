@@ -21,6 +21,8 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/version.hpp>
 
+#define DEBUG 1
+
 void read_image( std::string filename, cv::Mat &image )
 {
     image = cv::imread(filename, cv::IMREAD_UNCHANGED);
@@ -29,12 +31,6 @@ void read_image( std::string filename, cv::Mat &image )
         fprintf(stdout, "Could not open image");
         return;
     }
-
-    cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE );
-    cv::imshow("Display window", image);
-
-    cv::waitKey(0);
-
 }
 
 void generate_image(std::string filename, cv::Mat &image)
@@ -61,6 +57,7 @@ int main( int argc, char** argv )
         ("read,r","Read raw image")
         ("input,i", boost::program_options::value< std::string >(&input_file), "Input file")
         ("output,o", boost::program_options::value< std::string >(&output_file), "Output file")
+        ("display,d","Display image")
     ;
 
     boost::program_options::variables_map vm;
@@ -76,15 +73,25 @@ int main( int argc, char** argv )
 
     if(vm.count("read"))
     {
-        std::cout << "Input file: " << input_file << std::endl;
         read_image(input_file, image);
+#if DEBUG
+        std::cout << "Input file: " << input_file << std::endl;
+        std::cout << "output file: " << output_file << std::endl;
         std::cout << "Image size: " << image.cols << ", " << image.rows << std::endl;
+#endif
     }
-    if(vm.count("generate"))
+    else if(vm.count("generate"))
     {
         generate_image(input_file, image);
     }
+
     write_image(output_file, image);
+    if(vm.count("display"))
+    {
+        cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE );
+        cv::imshow("Display window", image);
+        cv::waitKey(0);
+    }
 
     return 0;
 }

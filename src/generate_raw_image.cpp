@@ -1,16 +1,21 @@
 /* 
- * This program is just for testing the main encoder program. For the moment, it uses OpenCV to decode
- * inputted image files and outputs raw image files in a user-defined format.
+ * This program is just for testing the main encoder program. For the moment,
+ * it uses OpenCV to decode inputted image files and outputs image files of a
+ * number of different formats.
  */
-// TODO: - Implement a command line parser
-//       - Don't display image when decoding
+// TODO: 
 //       - Add header and associated class
-//       - Add functionality to write .RAW files
-//       - Add functionality to write .jpg files
+//       - Improve command parsing so that the read or generate flags can only be
+//       chosen by themselves
+//       - Add option to generate images:
+//          - Gaussian noise
+//          - Random noise
+//          - Tiled image
+//          - Image with text
+//          - Image with geometric shapes
 
 #include <iostream>
 #include <fstream>
-//#include <vector>
 #include <string>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -40,12 +45,13 @@ void generate_image(std::string filename, cv::Mat &image)
 
 void write_image(std::string filename, cv::Mat &image)
 {
-    //std::cout << filename.substr(filename.length() - 3) << std::endl;
     if(filename.substr(filename.length() - 3) == "raw")
     {
         std::cout << "Saving raw matrix output" << std::endl;
         cv::FileStorage file(filename, cv::FileStorage::WRITE);
-        file << "image" << image;
+        // TODO: I don't like this syntax being used when it's done differently
+        // everywhere else in the code. Fix this.
+        file << "image" << image; 
 
     }
     else

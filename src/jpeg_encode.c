@@ -41,12 +41,6 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
         case 'v':
             arguments->verbose = 1;
             break;
-        //case 'i':
-        //    arguments->input_file = arg;
-        //    break;
-        //case 'o':
-        //    arguments->output_file = arg;
-        //    break;
         case ARGP_KEY_ARG: // Too many arguments
             if(state->arg_num >= 2)
                 argp_usage(state);
@@ -66,14 +60,14 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
 
 int getFileExtension(char *filename, char **fileExtension)
 {
-    *fileExtension = strchr(filename, '.');
+    *fileExtension = strrchr(filename, '.');
     if(*fileExtension == NULL)
         *fileExtension = "";
 
     return 0;
 }
 
-int readImg( char *filename, char *raw_img )
+int readImg( char *filename, char **raw_img )
 {
     char *fileExtension;
     getFileExtension(filename, &fileExtension);
@@ -81,9 +75,14 @@ int readImg( char *filename, char *raw_img )
     fprintf(stdout, "File extension: %s\n", fileExtension);
 #endif
     if(strcmp(fileExtension, ".jpg") == 0)
+    {
         fprintf(stdout, "File already in JPEG format\n");
+    }
     else if( strcmp(fileExtension, ".bmp") == 0)
+    {
         fprintf(stdout, "File in BMP format\n");
+        readBMP(filename);
+    }
     else if(strcmp(fileExtension, ".png") == 0)
         fprintf(stdout, "File in PNG format\n");
     else if(strcmp(fileExtension, ".tif") == 0)
@@ -91,11 +90,6 @@ int readImg( char *filename, char *raw_img )
     else 
         fprintf(stderr, "Unknown file format: %s\n", fileExtension);
 
-    //char *file_extension;
-    //for(int i = 0; i < strlen(filename); ++i)
-    //{
-    //    printf("%c", filename[i]);
-    //}
     return 0;
 }
 
@@ -123,7 +117,7 @@ int main(int argc, char **argv)
             arguments.silent ? "yes" : "no");
 
 #endif
-    readImg( arguments.args[0], raw_img );
+    readImg( arguments.args[0], &raw_img );
 
     return 0;
 

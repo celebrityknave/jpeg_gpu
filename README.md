@@ -30,6 +30,7 @@ If I get to the last step and JPEG is still a relevant standard, I'll be
 surprised and disappointed.
 
 ## Build instructions
+
 ```
 $ mkdir build
 $ cd build
@@ -37,6 +38,6 @@ $ cmake ..
 $ make -j8
 ```
 
-### Licensing
+## Licensing
 GPLv3 for the minute. When I get around to implementing the CUDA
 aspect, I'll likely need to update the licensing to reflect. We'll see.

@@ -40,7 +40,16 @@ void generate_image(std::string filename, cv::Mat &image)
 
 void write_image(std::string filename, cv::Mat &image)
 {
-    cv::imwrite(filename, image);
+    //std::cout << filename.substr(filename.length() - 3) << std::endl;
+    if(filename.substr(filename.length() - 3) == "raw")
+    {
+        std::cout << "Saving raw matrix output" << std::endl;
+        cv::FileStorage file(filename, cv::FileStorage::WRITE);
+        file << "image" << image;
+
+    }
+    else
+        cv::imwrite(filename, image);
 }
 
 int main( int argc, char** argv )

@@ -66,11 +66,40 @@ int getFileExtension(char *filename, char **fileExtension)
 
     return 0;
 }
+int readBMP( FILE *bmp_img_data, char **raw_img )
+{
+
+    return 0;
+}
+int readPNG( FILE *png_img_data, char **raw_img )
+{
+
+    return 0;
+}
+int readTIF( FILE *tif_img_data, char **raw_img )
+{
+
+    return 0;
+}
 
 int readImg( char *filename, char **raw_img )
 {
+    // Open file
+    FILE *raw_img_data;
+    fprintf(stdout, "Opening file: %s...\n", filename);
+    raw_img_data = fopen( filename, "rb" );
+    if( raw_img_data == NULL )
+    {
+        fprintf(stderr, "Error: Cannot open file\n");
+        return 1;
+    }
+
+
+    // Parse file extension
     char *fileExtension;
     getFileExtension(filename, &fileExtension);
+
+    // Process file using different methods depending on file extension
 #if DEBUG
     fprintf(stdout, "File extension: %s\n", fileExtension);
 #endif
@@ -81,14 +110,14 @@ int readImg( char *filename, char **raw_img )
     else if( strcmp(fileExtension, ".bmp") == 0)
     {
         fprintf(stdout, "File in BMP format\n");
-        readBMP(filename);
+        readBMP(raw_img_data, raw_img);
     }
     else if(strcmp(fileExtension, ".png") == 0)
         fprintf(stdout, "File in PNG format\n");
     else if(strcmp(fileExtension, ".tif") == 0)
         fprintf(stdout, "File in TIF format\n");
     else 
-        fprintf(stderr, "Unknown file format: %s\n", fileExtension);
+        fprintf(stderr, "Error: Unknown file format: %s\n", fileExtension);
 
     return 0;
 }

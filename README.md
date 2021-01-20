@@ -37,7 +37,3 @@ $ cd build
 $ cmake ..
 $ make -j8
 ```
-
-## Licensing
-GPLv3 for the minute. When I get around to implementing the CUDA
-aspect, I'll likely need to update the licensing to reflect. We'll see.

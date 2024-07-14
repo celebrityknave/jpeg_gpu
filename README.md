@@ -31,9 +31,9 @@ surprised and disappointed.
 
 ## Build instructions
 
-```
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make -j8
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
 ```

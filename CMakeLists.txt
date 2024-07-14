@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 project ( GPU_JPEG_ENCODER )
 find_package( OpenCV COMPONENTS core highgui )
 find_package( Boost COMPONENTS program_options REQUIRED)
@@ -8,7 +8,7 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 
-set( GENERATE_RAW_IMAGE_SRC src/generate_raw_image.cpp )
+set( GENERATE_RAW_IMAGE_SRC src/generate_image.cpp )
 #set( GENERATE_RAW_IMAGE_HEADERS include/jpeg_encode.h )
 
 set( ENCODE_JPEG_SRC src/jpeg_encode.c )

@@ -19,14 +19,68 @@
 #include <string>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <boost/program_options/cmdline.hpp>
-#include <boost/program_options/options_description.hpp>
-#include <boost/program_options/parsers.hpp>
-#include <boost/program_options/positional_options.hpp>
-#include <boost/program_options/variables_map.hpp>
-#include <boost/program_options/version.hpp>
+#include <argp.h>
 
 #define DEBUG 1
+
+const char *argp_program_bug_address = "<evan.peter.blake@gmail.com>";
+const char *argp_program_version = "CAJE 0.0.0";
+static char doc[] = "CAJE -- CUDA-accelerated JPEG encoder";
+static char args_doc[] = "INFILE, OUTFILE";
+
+struct Arguments
+{
+    bool verbose;
+    bool quiet;
+    bool silent;
+    bool display;
+    bool gaussian;
+    std::string output_file;
+};
+
+static struct argp_option options[] = {
+    // name         key     arg        flags           doc
+    {"verbose",     'v',    0,          0,              "Produce verbose output." },
+    {"quiet",       'q',    0,          0,              "Don't produce any output." },
+    {"gaussian",    'g',    0,          0,              "Generate Gaussian noise."},
+    {"output",      'o',    "OUTFILE",  0,              "Location of output file" },
+    {"display",     'd',    0,          0,              "Whether to display the image after generation"},
+    { 0 }
+};
+
+static error_t
+parse_opt(int key, char* arg, struct argp_state* state)
+{
+    error_t err = 0;
+    struct Arguments *arguments = (struct Arguments*)(state->input);
+
+    switch(key)
+    {
+        case ARGP_KEY_INIT:
+            break;
+        case 'q':
+            arguments->silent = 1;
+            break;
+        case 'v':
+            arguments->verbose = 1;
+            break;
+        case ARGP_KEY_ARG:
+            // FIXME : this won't work. Using the argp_key_arg case is an artefact of the previous method of arg parsing
+            if(state->arg_num >= 2)
+                argp_usage(state);
+            arguments->output_file = arg;
+            break;
+        case ARGP_KEY_END: // Not enough arguments
+            if(state->arg_num < 2)
+                argp_usage(state);
+            break;
+        default:
+            return ARGP_ERR_UNKNOWN;
+    }
+    return 0;
+}
+
+static struct argp argp = { options, parse_opt, args_doc, doc };
 
 void read_image( std::string filename, cv::Mat &image )
 {
@@ -64,44 +118,22 @@ int main( int argc, char** argv )
     std::string input_file;
     std::string output_file;
 
-    boost::program_options::options_description desc("Usage");
-    desc.add_options()
-        // Add command line options here
-        ("help,h", "show this menu")
-        ("generate,g","Generate image")
-        ("read,r","Read raw image")
-        ("input,i", boost::program_options::value< std::string >(&input_file), "Input file")
-        ("output,o", boost::program_options::value< std::string >(&output_file), "Output file")
-        ("display,d","Display image")
-    ;
+    struct Arguments arguments;
+    arguments.silent = 0;
+    arguments.verbose = 0;
+    arguments.output_file = "-";
 
-    boost::program_options::variables_map vm;
-    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-    boost::program_options::notify(vm);
+    argp_parse(&argp, argc, argv, 0,0, &arguments);
 
-    if(vm.count("help"))
-    {
-        std::cout << desc << std::endl;
-        return 1;
-    }
     // FIXME change to whatever value argv[1] is when I implement a proper command line parser
 
-    if(vm.count("read"))
-    {
-        read_image(input_file, image);
-#if DEBUG
-        std::cout << "Input file: " << input_file << std::endl;
-        std::cout << "output file: " << output_file << std::endl;
-        std::cout << "Image size: " << image.cols << ", " << image.rows << std::endl;
-#endif
-    }
-    else if(vm.count("generate"))
+    if(arguments.gaussian)
     {
         generate_image(input_file, image);
     }
 
     write_image(output_file, image);
-    if(vm.count("display"))
+    if(arguments.display)
     {
         cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE );
         cv::imshow("Display window", image);

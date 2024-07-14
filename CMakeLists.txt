@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.5.0)
 cmake_policy( SET CMP0167 NEW)
 
-project(jpeg_gpu_decoder VERSION 0.1.0 LANGUAGES C CXX)
+project(gajed VERSION 0.1.0 LANGUAGES C CXX)
 find_package( OpenCV COMPONENTS core highgui )
-find_package( Boost COMPONENTS program_options REQUIRED )
 
 find_package( Catch2 REQUIRED )
 
@@ -12,11 +11,6 @@ message(STATUS "    config: ${OpenCV_DIR}")
 message(STATUS "    version: ${OpenCV_VERSION}")
 message(STATUS "    libraries: ${OpenCV_LIBS}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
-
-# Set boost parameters
-set( Boost_USE_STATIC_LIBS OFF )
-set( Boost_USE_MULTITHREADED ON )
-set( Boost_USE_STATIC_RUNTIME OFF )
 
 set( GENERATE_RAW_IMAGE_SRC src/generate_image.cpp )
 

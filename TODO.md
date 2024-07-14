@@ -1,6 +1,6 @@
 # To Do
 
-- Remove Boost and OpenCV as universal dependencies.
-- Fix CMakeLists.txt so that 'generate_raw_jpeg' is only built if Boost and OpenCV are present.
-- Build first iteration of encode_jpeg
-- Build first iteration of decode_jpeg
+* Remove OpenCV as a universal dependency.
+  * Fix CMakeLists.txt so that 'generate_image' is only built if OpenCV is present.
+* Build first iteration of `gaje`
+* Build first iteration of `gajd`

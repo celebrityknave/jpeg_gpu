@@ -16,7 +16,21 @@ TEST_CASE ("Width is returned", "[image]")
 
 TEST_CASE ("Image size in bytes is returned", "[image]")
 {
-    // assuming image is 32 x 32 x 8
+    // assuming image is 32 x 32 x 8 x 3
     Img img = Img();
-    REQUIRE( img.getSize() == 8192 );
+    REQUIRE( img.getSize() == 24576 );
+}
+
+TEST_CASE ("Image bit-depth is returned", "[image]")
+{
+    // assuming 8-bit image depth
+    Img img = Img();
+    REQUIRE( img.getBitDepth() == 8);
+}
+
+TEST_CASE ("Number of image colour channels is returned", "[image]")
+{
+    // Assuming RGB
+    Img img = Img();
+    REQUIRE( img.getNumChannels() == 3);
 }

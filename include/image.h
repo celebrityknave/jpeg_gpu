@@ -17,6 +17,10 @@ public:
     int getWidth();
     // Returns size of output JPEG image in bytes
     int getSize();
+    // Returns image bit-depth
+    int getBitDepth();
+    // Returns number of colour channels
+    int getNumChannels();
     // Returns error code based on success of JPEG encode
     int encodeJPEG();
 

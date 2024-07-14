@@ -1,7 +1,12 @@
 #include <image.h>
 
 Img::Img()
-{}
+{
+    height = 0;
+    width = 0;
+    bitDepth = 0;
+    channels = 0;
+}
 
 Img::~Img()
 {}
@@ -13,17 +18,27 @@ int Img::getColourSpace()
 
 int Img::getHeight()
 {
-    return 0;
+    return height;
 }
 
 int Img::getWidth()
 {
-    return 0;
+    return width;
 }
 
 int Img::getSize()
 {
-    return 0;
+    return height * width * bitDepth * channels;
+}
+
+int Img::getBitDepth()
+{
+    return bitDepth;
+}
+
+int Img::getNumChannels()
+{
+    return channels;
 }
 
 int Img::encodeJPEG()

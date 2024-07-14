@@ -24,7 +24,7 @@ to read up on unfamiliar maths.
 
 There's also a decent chance I'll want to change to a less-proprietary GPGPU
 library if some of the competing libraries have improved by then. We'll find
-out when we get here. Will need to change the name if so, which will be tragic. 
+out when we get here. Will need to change the name if so, which will be tragic.
 
 If I get to the last step and JPEG is still a relevant standard, I'll be
 surprised and disappointed.

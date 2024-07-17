@@ -26,7 +26,7 @@
 const char *argp_program_bug_address = "<evan.peter.blake@gmail.com>";
 const char *argp_program_version = "CAJE 0.0.0";
 static char doc[] = "CAJE -- CUDA-accelerated JPEG encoder";
-static char args_doc[] = "INFILE, OUTFILE";
+static char args_doc[] = "";
 
 struct Arguments
 {
@@ -64,15 +64,14 @@ parse_opt(int key, char* arg, struct argp_state* state)
         case 'v':
             arguments->verbose = 1;
             break;
-        case ARGP_KEY_ARG:
-            // FIXME : this won't work. Using the argp_key_arg case is an artefact of the previous method of arg parsing
-            if(state->arg_num >= 2)
-                argp_usage(state);
-            arguments->output_file = arg;
+        case 'g':
+            arguments->gaussian = 1;
             break;
-        case ARGP_KEY_END: // Not enough arguments
-            if(state->arg_num < 2)
-                argp_usage(state);
+        case 'd':
+            arguments->display = 1;
+            break;
+        case 'o':
+            arguments->output_file = arg;
             break;
         default:
             return ARGP_ERR_UNKNOWN;
@@ -92,9 +91,10 @@ void read_image( std::string filename, cv::Mat &image )
     }
 }
 
-void generate_image(std::string filename, cv::Mat &image)
+cv::Mat generate_image()
 {
-    return;
+    cv::Mat mat;
+    return mat;
 }
 
 void write_image(std::string filename, cv::Mat &image)
@@ -109,32 +109,38 @@ void write_image(std::string filename, cv::Mat &image)
 
     }
     else
+    {
         cv::imwrite(filename, image);
+    }
+        
 }
 
 int main( int argc, char** argv )
 {
-    cv::Mat image;
-    std::string input_file;
+    cv::Mat image = cv::Mat::zeros(cv::Size(30,30), CV_8UC1);
     std::string output_file;
 
     struct Arguments arguments;
     arguments.silent = 0;
     arguments.verbose = 0;
-    arguments.output_file = "-";
 
     argp_parse(&argp, argc, argv, 0,0, &arguments);
 
     // FIXME change to whatever value argv[1] is when I implement a proper command line parser
 
-    if(arguments.gaussian)
+    if(arguments.gaussian == true)
     {
-        generate_image(input_file, image);
+        image = generate_image();
     }
 
-    write_image(output_file, image);
-    if(arguments.display)
+    if(!arguments.output_file.empty())
     {
+        write_image(arguments.output_file, image);
+    }
+    
+    if(arguments.display == true)
+    {
+        std::cout << "Displaying image" << std::endl;
         cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE );
         cv::imshow("Display window", image);
         cv::waitKey(0);

@@ -46,8 +46,8 @@ static struct argp_option options[] = {
     {"quiet",       'q',    0,          0,              "Don't produce any output." },
     {"gaussian",    'g',    0,          0,              "Generate Gaussian noise."},
     {"output",      'o',    "OUTFILE",  0,              "Location of output file" },
-    {"height",      'h',    "HEIGHT",   0,              "Height of generated image" },
-    {"width",       'w',    "WIDTH",    0,              "Width of generated image"},
+    {"rows",      'r',    "HEIGHT",   0,              "Height of generated image" },
+    {"columns",       'c',    "WIDTH",    0,              "Width of generated image"},
     {"display",     'd',    0,          0,              "Whether to display the image after generation"},
     { 0 }
 };
@@ -77,10 +77,10 @@ parse_opt(int key, char* arg, struct argp_state* state)
         case 'o':
             arguments->output_file = arg;
             break;
-        case 'h':
+        case 'r':
             arguments->height = (int)strtol(arg, NULL, 10);;
             break;
-        case 'w':
+        case 'c':
             arguments->width = (int)strtol(arg, NULL, 10);
             break;
         default:

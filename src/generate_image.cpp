@@ -35,6 +35,8 @@ struct Arguments
     bool silent;
     bool display;
     bool gaussian;
+    int height;
+    int width;
     std::string output_file;
 };
 
@@ -44,6 +46,8 @@ static struct argp_option options[] = {
     {"quiet",       'q',    0,          0,              "Don't produce any output." },
     {"gaussian",    'g',    0,          0,              "Generate Gaussian noise."},
     {"output",      'o',    "OUTFILE",  0,              "Location of output file" },
+    {"height",      'h',    "HEIGHT",   0,              "Height of generated image" },
+    {"width",       'w',    "WIDTH",    0,              "Width of generated image"},
     {"display",     'd',    0,          0,              "Whether to display the image after generation"},
     { 0 }
 };
@@ -73,6 +77,12 @@ parse_opt(int key, char* arg, struct argp_state* state)
         case 'o':
             arguments->output_file = arg;
             break;
+        case 'h':
+            arguments->height = (int)strtol(arg, NULL, 10);;
+            break;
+        case 'w':
+            arguments->width = (int)strtol(arg, NULL, 10);
+            break;
         default:
             return ARGP_ERR_UNKNOWN;
     }
@@ -91,9 +101,9 @@ void read_image( std::string filename, cv::Mat &image )
     }
 }
 
-cv::Mat generate_image()
+cv::Mat generate_image(int height, int width)
 {
-    cv::Mat mat;
+    cv::Mat mat = cv::Mat::zeros(cv::Size(height, width), CV_8UC1);
     return mat;
 }
 
@@ -130,7 +140,7 @@ int main( int argc, char** argv )
 
     if(arguments.gaussian == true)
     {
-        image = generate_image();
+        image = generate_image(arguments.height, arguments.width);
     }
 
     if(!arguments.output_file.empty())

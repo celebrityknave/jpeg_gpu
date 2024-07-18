@@ -35,6 +35,7 @@ struct Arguments
     bool silent;
     bool display;
     bool gaussian;
+    bool noise;
     int height;
     int width;
     std::string output_file;
@@ -45,9 +46,10 @@ static struct argp_option options[] = {
     {"verbose",     'v',    0,          0,              "Produce verbose output." },
     {"quiet",       'q',    0,          0,              "Don't produce any output." },
     {"gaussian",    'g',    0,          0,              "Generate Gaussian noise."},
+    {"random",      'u',    0,          0,              "Generate uniform random noise."},
     {"output",      'o',    "OUTFILE",  0,              "Location of output file" },
-    {"rows",      'r',    "HEIGHT",   0,              "Height of generated image" },
-    {"columns",       'c',    "WIDTH",    0,              "Width of generated image"},
+    {"rows",        'r',    "HEIGHT",   0,              "Height of generated image" },
+    {"columns",     'c',    "WIDTH",    0,              "Width of generated image"},
     {"display",     'd',    0,          0,              "Whether to display the image after generation"},
     { 0 }
 };
@@ -70,6 +72,9 @@ parse_opt(int key, char* arg, struct argp_state* state)
             break;
         case 'g':
             arguments->gaussian = 1;
+            break;
+        case 'u':
+            arguments->noise = 1;
             break;
         case 'd':
             arguments->display = 1;
@@ -101,9 +106,22 @@ void read_image( std::string filename, cv::Mat &image )
     }
 }
 
-cv::Mat generate_image(int height, int width)
+cv::Mat generate_uniform_random(int height, int width)
 {
-    cv::Mat mat = cv::Mat::zeros(cv::Size(height, width), CV_8UC1);
+    // Uniform random
+    cv::Mat mat(height, width, CV_8UC1);
+    cv::randu(mat, cv::Scalar::all(0), cv::Scalar::all(255));
+    return mat;
+}
+
+cv::Mat generate_normal_random(int height, int width)
+{
+    cv::Mat mat(height, width, CV_8UC1);
+    cv::randn(mat, cv::Scalar::all(0), cv::Scalar::all(255));
+    // Uniform colour
+    //cv::Mat matn(height, width, CV_8UC1, cv::Scalar::all(128));
+    //cv::RNG rng;
+    //rng.fill(matu, cv::RNG::NORMAL, 10, 20);
     return mat;
 }
 
@@ -140,8 +158,14 @@ int main( int argc, char** argv )
 
     if(arguments.gaussian == true)
     {
-        image = generate_image(arguments.height, arguments.width);
+        image = generate_normal_random(arguments.height, arguments.width);
     }
+
+    if(arguments.noise == true)
+    {
+        image = generate_uniform_random(arguments.height, arguments.width);
+    }
+
 
     if(!arguments.output_file.empty())
     {

@@ -8,8 +8,6 @@
 //       - Improve command parsing so that the read or generate flags can only be
 //       chosen by themselves
 //       - Add option to generate images:
-//          - Gaussian noise
-//          - Random noise
 //          - Tiled image
 //          - Image with text
 //          - Image with geometric shapes
@@ -24,8 +22,8 @@
 #define DEBUG 1
 
 const char *argp_program_bug_address = "<evan.peter.blake@gmail.com>";
-const char *argp_program_version = "CAJE 0.0.0";
-static char doc[] = "CAJE -- CUDA-accelerated JPEG encoder";
+const char *argp_program_version = "GAJE 0.0.0";
+static char doc[] = "GAJED -- GPU-accelerated JPEG encoder/decode Image generator";
 static char args_doc[] = "";
 
 struct Arguments
@@ -36,6 +34,8 @@ struct Arguments
     bool display;
     bool gaussian;
     bool noise;
+    bool tiled;
+    bool text;
     int height;
     int width;
     std::string output_file;
@@ -47,6 +47,8 @@ static struct argp_option options[] = {
     {"quiet",       'q',    0,          0,              "Don't produce any output." },
     {"gaussian",    'g',    0,          0,              "Generate Gaussian noise."},
     {"random",      'u',    0,          0,              "Generate uniform random noise."},
+    {"tiled",       't',    0,          0,              "Generate tiled image"},
+    {"text",        'w',    "TEXT",     0,              "Annotate image with text"},
     {"output",      'o',    "OUTFILE",  0,              "Location of output file" },
     {"rows",        'r',    "HEIGHT",   0,              "Height of generated image" },
     {"columns",     'c',    "WIDTH",    0,              "Width of generated image"},
@@ -82,6 +84,11 @@ parse_opt(int key, char* arg, struct argp_state* state)
         case 'o':
             arguments->output_file = arg;
             break;
+        case 'w':
+            arguments->text = arg;
+            break;
+        case 't':
+            arguments->tiled = 1;
         case 'r':
             arguments->height = (int)strtol(arg, NULL, 10);;
             break;
@@ -117,11 +124,20 @@ cv::Mat generate_uniform_random(int height, int width)
 cv::Mat generate_normal_random(int height, int width)
 {
     cv::Mat mat(height, width, CV_8UC1);
-    cv::randn(mat, cv::Scalar::all(0), cv::Scalar::all(255));
-    // Uniform colour
-    //cv::Mat matn(height, width, CV_8UC1, cv::Scalar::all(128));
-    //cv::RNG rng;
-    //rng.fill(matu, cv::RNG::NORMAL, 10, 20);
+    // 74 is based on the result of stdev(0:255). This is probably equivalent to uniform random though.
+    // Might be worth combining thesee into a single method and making uniform rand a special case.
+    cv::randn(mat, cv::Scalar::all(128), cv::Scalar::all(74));
+    return mat;
+}
+
+cv::Mat generate_tiled(int height, int width, int tileSize)
+{
+    cv::Mat mat(height, width, CV_8UC1);
+    return mat;
+}
+
+cv::Mat add_text(cv::Mat mat)
+{
     return mat;
 }
 

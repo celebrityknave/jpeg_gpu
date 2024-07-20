@@ -8,15 +8,22 @@
 //       - Improve command parsing so that the read or generate flags can only be
 //       chosen by themselves
 //       - Add option to generate images:
-//          - Tiled image
 //          - Image with text
 //          - Image with geometric shapes
+//
+//  - Current goal: UI option layout:
+//      - Pick image generation base: tiled, static, solid colour, or input image
+//      - Add filters: gaussian noise, blur, add text etc.
+//      - Select whether to display / save image
+//  - In future:
+//      - laplacian, resharp filters, colour
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <argp.h>
 
 #define DEBUG 1
@@ -35,9 +42,10 @@ struct Arguments
     bool gaussian;
     bool noise;
     bool tiled;
-    bool text;
+    std::string text;
     int height;
     int width;
+    int kernelSize;
     std::string output_file;
 };
 
@@ -122,13 +130,29 @@ cv::Mat generate_uniform_random(int height, int width)
     return mat;
 }
 
-cv::Mat generate_normal_random(int height, int width)
+cv::Mat generate_normal_random(cv::Mat image)
 {
-    cv::Mat mat(height, width, CV_8UC1);
+    cv::Mat mat(image.rows, image.cols, CV_8UC1);
     // 74 is based on the result of stdev(0:255). This is probably equivalent to uniform random though.
     // Might be worth combining thesee into a single method and making uniform rand a special case.
     cv::randn(mat, cv::Scalar::all(128), cv::Scalar::all(74));
-    return mat;
+    image += mat;
+    // todo: might need to normalise this
+    //cv::normalize(image, image, 0, 255, cv::NORM_MINMAX);
+    return image;
+}
+
+cv::Mat write_text(cv::Mat image, std::string text)
+{
+    //cv::initFont(CV_FONT_HERSHEY_SIMPLEX, 1.0, 1.0, 0.0, 1, 8);
+    cv::putText(image,
+                (cv::String)text,
+                cv::Point(image.cols/2,image.rows/2),
+                cv::FONT_HERSHEY_COMPLEX,
+                1.0,
+                cv::Scalar(128),
+                2);
+    return image;
 }
 
 cv::Mat generate_tiled(int height, int width, int tileSize)
@@ -137,7 +161,6 @@ cv::Mat generate_tiled(int height, int width, int tileSize)
     bool x = false;
     int xi = height / tileSize;
     int xj = width / tileSize;
-    std::cout << "height/tile: " << xi << "\nwidth/tile: " << xj << std::endl;
 
     for(int i=0; i < int(height/tileSize); i++)
     {
@@ -197,21 +220,7 @@ int main( int argc, char** argv )
     arguments.silent = 0;
     arguments.verbose = 0;
 
-    std::cout << "Parsing args" << std::endl;
     argp_parse(&argp, argc, argv, 0,0, &arguments);
-    std::cout << "Finished parsing args" << std::endl;
-
-    // FIXME change to whatever value argv[1] is when I implement a proper command line parser
-
-    if(arguments.gaussian == true)
-    {
-        image = generate_normal_random(arguments.height, arguments.width);
-    }
-
-    if(arguments.noise == true)
-    {
-        image = generate_uniform_random(arguments.height, arguments.width);
-    }
 
     if(arguments.tiled == true)
     {
@@ -219,6 +228,21 @@ int main( int argc, char** argv )
         image = generate_tiled(arguments.height, arguments.width, 64);
     }
 
+    if(!arguments.text.empty())
+    {
+        image = write_text(image, arguments.text);
+    }
+
+    if(arguments.gaussian == true)
+    {
+        std::cout << "Applying gaussian filter" << std::endl;
+        image = generate_normal_random(image);
+    }
+
+    if(arguments.noise == true)
+    {
+        image = generate_uniform_random(arguments.height, arguments.width);
+    }
 
     if(!arguments.output_file.empty())
     {

@@ -8,7 +8,6 @@
 //       - Improve command parsing so that the read or generate flags can only be
 //       chosen by themselves
 //       - Add option to generate images:
-//          - Image with text
 //          - Image with geometric shapes
 //
 //  - Current goal: UI option layout:
@@ -31,7 +30,7 @@
 const char *argp_program_bug_address = "<evan.peter.blake@gmail.com>";
 const char *argp_program_version = "GAJE 0.0.0";
 static char doc[] = "GAJED -- GPU-accelerated JPEG encoder/decode Image generator";
-static char args_doc[] = "";
+static char args_doc[] = "[-i|-t|-u]";
 
 struct Arguments
 {

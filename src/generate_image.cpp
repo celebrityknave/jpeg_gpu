@@ -89,6 +89,7 @@ parse_opt(int key, char* arg, struct argp_state* state)
             break;
         case 't':
             arguments->tiled = 1;
+            break;
         case 'r':
             arguments->height = (int)strtol(arg, NULL, 10);;
             break;
@@ -132,7 +133,35 @@ cv::Mat generate_normal_random(int height, int width)
 
 cv::Mat generate_tiled(int height, int width, int tileSize)
 {
-    cv::Mat mat(height, width, CV_8UC1);
+    cv::Mat mat(0, width, CV_8UC1);
+    bool x = false;
+    int xi = height / tileSize;
+    int xj = width / tileSize;
+    std::cout << "height/tile: " << xi << "\nwidth/tile: " << xj << std::endl;
+
+    for(int i=0; i < int(height/tileSize); i++)
+    {
+        cv::Mat vmat(tileSize, 0, CV_8UC1);
+        for(int i=0; i < int(width/tileSize); i++)
+        {
+            cv::Mat umat(tileSize, tileSize, CV_8UC1);
+            
+            if(x)
+            {
+                umat = cv::Scalar(0);
+            }
+            else
+            {
+                umat = cv::Scalar(255);
+            }
+            x = !x;
+            cv::hconcat(vmat, umat, vmat);
+        }
+        x = !x;
+        cv::vconcat(mat, vmat, mat);
+
+    }
+    
     return mat;
 }
 
@@ -168,7 +197,9 @@ int main( int argc, char** argv )
     arguments.silent = 0;
     arguments.verbose = 0;
 
+    std::cout << "Parsing args" << std::endl;
     argp_parse(&argp, argc, argv, 0,0, &arguments);
+    std::cout << "Finished parsing args" << std::endl;
 
     // FIXME change to whatever value argv[1] is when I implement a proper command line parser
 
@@ -180,6 +211,12 @@ int main( int argc, char** argv )
     if(arguments.noise == true)
     {
         image = generate_uniform_random(arguments.height, arguments.width);
+    }
+
+    if(arguments.tiled == true)
+    {
+        std::cout << "Tiling image" << std::endl;
+        image = generate_tiled(arguments.height, arguments.width, 64);
     }
 
 

@@ -1,2 +1,8 @@
 build/
 .vscode/
+bin/
+*.out
+*.cpp.o
+*.ninja*
+*.cmake
+CMakeFiles/

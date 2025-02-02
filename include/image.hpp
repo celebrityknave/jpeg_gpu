@@ -1,13 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <argp.h>
-#include <string>
 
 class Img
 {
 public:
-    Img();
+    Img(int height, int width, int bitDepth, int channels);
     ~Img();
     // Returns enum value based on colour type. BGR, RGB, grayscale, etc.
     int getColourSpace();

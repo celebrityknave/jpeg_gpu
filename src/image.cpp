@@ -1,11 +1,11 @@
-#include <image.h>
+#include <image.hpp>
 
-Img::Img()
+Img::Img(int m_height, int m_width, int m_bitDepth, int m_channels)
 {
-    height = 0;
-    width = 0;
-    bitDepth = 0;
-    channels = 0;
+    height = m_height;
+    width = m_width;
+    bitDepth = m_bitDepth;
+    channels = m_channels;
 }
 
 Img::~Img()

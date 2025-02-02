@@ -158,11 +158,14 @@ cv::Mat generate_tiled(int height, int width, int tileSize)
 {
     cv::Mat mat(0, width, CV_8UC1);
     bool x = false;
-    int xi = height / tileSize;
-    int xj = width / tileSize;
+
+    std::cout << "Height: " << height << std::endl;
+    std::cout << "Width: " << width << std::endl;
+    std::cout << "tile size: " << tileSize << std::endl;
 
     for(int i=0; i < int(height/tileSize); i++)
     {
+        
         cv::Mat vmat(tileSize, 0, CV_8UC1);
         for(int i=0; i < int(width/tileSize); i++)
         {
